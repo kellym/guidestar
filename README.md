@@ -33,7 +33,7 @@ Once you initialize it, you can use it in your code via:
     results.total_count
     # => 1292
 
-    results.organizations.each do |org|
+    results.each do |org|
       org.name
       # => 'Monkey Paradise'
       org.ein
@@ -46,9 +46,14 @@ Once you initialize it, you can use it in your code via:
 
 For getting the next page of results, it behaves similarly to kaminari or will_paginate:
 
-    results.per(50).page(2).organizations
+    results.per(50).page(2).each { |more_orgs| puts more_orgs.name }
 
+If you need more direct access to the array of results, just hit:
 
+    results.organizations
+
+The way you use it is all super-flexible.  You can pass in your options beforehand or
+chain them along the way.
 
 ## Contributing
 
