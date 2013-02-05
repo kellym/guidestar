@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['kellymartinv@gmail.com']
   gem.description   = "Allows access to the Guidestar API"
   gem.summary       = "Use this gem to access the Guidestar API"
-  gem.homepage      = ''
+  gem.homepage      = 'http://github.com/kellym/guidestar'
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
