@@ -1,38 +1,59 @@
 module Guidestar
   class Result
+
+    include Enumerable
+    extend Forwardable
+
+    def_delegators :organizations, :size, :length, :last
+    def_delegators :data, :xml, :total_count, :search_time
+
+    def initialize(path, client)
+      @path = path
+      @client = client
+      @options = {}
+      @data = Hashie::Mash.new
+    end
+
+    # Public: Contains the data we retrieve, or gets new data if there
+    # are new parameters on the request.
     #
-    # Public: Returns the String xml of the response from Guidestar
-    attr_reader :xml
-
-    # Public: Returns the Integer number of results from the query
-    attr_reader :total_count
-
-    # Public: Returns the Float time in seconds to search
-    attr_reader :search_time
-
-    # Public: Returns an Array of organizations from the search
+    # Returns an Array of organizations from the search
     def organizations
       return @organizations if @organizations
-      parse_xml(@client.get_raw(@path, @options))
+      load_response
       @organizations
     end
 
-    def initialize(raw_response, path, client)
-      @path = path
-      @client = client
-      parse_xml(raw_response)
+    # Internal: Contains a few extra details that might be desired, like
+    # the total_count and search_time, which are also available via
+    # delegation
+    #
+    # Returns a Hash of extra data
+    def data
+      return @data if @organizations
+      load_response
+      @data
+    end
+
+    # Public: Iterates through the inner array to make data more accessible
+    def each(&block)
+      organizations.each(&block)
     end
 
     private
 
-    def parse_xml(raw_response)
-      @xml = ::MultiXml.parse(raw_response.body.string)['root']
-      @total_count = @xml['totalResults'].to_i
-      @search_time = @xml['searchTime'].to_f
-      @options = {}
+    def load_response
+      raw_response = @client.get_raw(@path, @options)
+      @data[:xml] = ::MultiXml.parse(raw_response.body.string)['root']
+      @data[:total_count] = @data[:xml]['totalResults'].to_i
+      @data[:search_time] = @data[:xml]['searchTime'].to_f
 
+      @options = {}
       @organizations = []
-      orgs = @xml['organizations']['organization']
+
+      orgs = @data[:xml]['organizations']['organization'] if @data[:xml]['organizations']
+      return if orgs.nil?
+
       orgs = [orgs] unless orgs.is_a?(Array)
       orgs.each do |org|
         org = Hashie::Mash.new clean_keys(org)

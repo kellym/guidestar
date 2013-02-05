@@ -16,6 +16,10 @@ module Guidestar
       yield self
       true
     end
+
+    def method_missing(method_name, *args)
+      Guidestar::Client.new.send(method_name.to_sym, *args)
+    end
   end
 
   Faraday.register_middleware :response,

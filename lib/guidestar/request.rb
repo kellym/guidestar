@@ -2,7 +2,8 @@ module Guidestar
   module Request
 
     def get(path, data={})
-      Guidestar::Result.new(get_raw(path, data),path,self)
+      set_params(data)
+      Guidestar::Result.new(path,self)
     end
 
     def get_raw(path, data={})
@@ -20,7 +21,8 @@ module Guidestar
       @options[:page_size]  = @options.delete(:per)       if @options[:per]
       @options[:zip_radius] = @options.delete(:zipradius) if @options[:zipradius]
       @options[:org_name]   = @options.delete(:name)      if @options[:name]
-      @options[:offset]     = (@options.delete(:page)-1)  if @options[:page]
+      @options[:offset]     = (@options.delete(:page)-1) * @options[:page_size].to_i if @options[:page]
+      @options[:ein]        = @options[:ein].to_s.insert(2,'-') if @options[:ein] && @options[:ein].to_s[2] != '-'
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.query do
           xml.version @options[:version]
