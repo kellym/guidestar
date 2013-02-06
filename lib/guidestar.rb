@@ -18,7 +18,7 @@ module Guidestar
     end
 
     def method_missing(method_name, *args)
-      Guidestar::Client.new.send(method_name.to_sym, *args)
+      Guidestar::Chain.new.send(method_name.to_sym, *args)
     end
   end
 
