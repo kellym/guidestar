@@ -71,8 +71,7 @@ module Guidestar
         org[:tax_deductible] = org[:deductibility] == 'Contributions are deductible, as provided by law'
         org[:result_position] = org[:result_position].to_i
 
-        ein = org[:ein]
-        def ein.to_i; self.gsub('-','').to_i; end
+        org[:ein] = EIN.new org[:ein]
 
         @organizations << org
       end
@@ -105,6 +104,13 @@ module Guidestar
       @organizations = nil
       self
     end
+
+    class EIN < ::String
+      def to_i
+        self.to_s.gsub('-','').to_i
+      end
+    end
+
   end
 end
 
