@@ -15,6 +15,8 @@ module Guidestar
 
     attr_reader :proxy
 
+    attr_reader :options
+
     # Public: Sets up the core Client object that can be reused throughout
     # the request.
     def initialize(options={})
@@ -23,7 +25,7 @@ module Guidestar
       @username = options.delete(:username) || Guidestar.username
       @password = options.delete(:password) || Guidestar.password
       @options  = options.reverse_merge!(:version => 1.0,
-                                         :limit => 25,
+                                         :page_size => 25,
                                          :page => 1 )
     end
 

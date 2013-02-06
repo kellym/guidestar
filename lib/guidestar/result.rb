@@ -5,7 +5,7 @@ module Guidestar
     extend Forwardable
 
     def_delegators :organizations, :size, :length, :last
-    def_delegators :data, :xml, :total_count, :search_time
+    def_delegators :data, :xml, :total_count, :search_time, :total_pages
 
     def initialize(path, client)
       @path = path
@@ -46,6 +46,7 @@ module Guidestar
       raw_response = @client.get_raw(@path, @options)
       @data[:xml] = ::MultiXml.parse(raw_response.body.string)['root']
       @data[:total_count] = @data[:xml]['totalResults'].to_i
+      @data[:total_pages] = (@data[:total_count].to_f / @client.options[:page_size]).ceil
       @data[:search_time] = @data[:xml]['searchTime'].to_f
 
       @options = {}
