@@ -32,6 +32,16 @@ Or you can create a Guidestar::Client object and go from there:
     results = client.keyword('monkeys').per(20).search
     # or any combination of the above methods
 
+There are four main API methods that you can use:
+
+    Guidestar.search            # this is the only tested method on this repo
+    Guidestar.detailed_search
+    Guidestar.charity_check
+    Guidestar.npo_validation
+
+See https://gsservices.guidestar.org/GuideStar_SearchService/WebServiceSearchQuery.xsd
+for detailed search parameters.
+
 The Guidestar::Result object behaves like an array, but includes some extra
 fields for your usage:
 
