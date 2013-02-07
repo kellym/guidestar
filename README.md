@@ -34,10 +34,10 @@ Or you can create a Guidestar::Client object and go from there:
 
 There are four main API methods that you can use:
 
-    Guidestar.search            # this is the only tested method on this repo
-    Guidestar.detailed_search
-    Guidestar.charity_check
-    Guidestar.npo_validation
+    Guidestar.search            # tested
+    Guidestar.detailed_search   # tested
+    Guidestar.charity_check     # untested
+    Guidestar.npo_validation    # untested
 
 See https://gsservices.guidestar.org/GuideStar_SearchService/WebServiceSearchQuery.xsd
 for detailed search parameters.

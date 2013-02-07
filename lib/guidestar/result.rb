@@ -4,7 +4,7 @@ module Guidestar
     include Enumerable
     extend Forwardable
 
-    def_delegators :organizations, :size, :length, :last
+    def_delegators :all, :size, :length, :last
     def_delegators :data, :xml, :total_count, :search_time, :total_pages
 
     def initialize(path, client)
@@ -18,11 +18,12 @@ module Guidestar
     # are new parameters on the request.
     #
     # Returns an Array of organizations from the search
-    def organizations
+    def all
       return @organizations if @organizations
       load_response
       @organizations
     end
+    alias :organizations :all
 
     # Internal: Contains a few extra details that might be desired, like
     # the total_count and search_time, which are also available via
@@ -57,20 +58,33 @@ module Guidestar
 
       orgs = [orgs] unless orgs.is_a?(Array)
       orgs.each do |org|
-        org = Hashie::Mash.new clean_keys(org)
+        org = Hashie::Mash.new clean_result(org)
 
-        org.delete(:general_information).each do |k,v|
+        general_information = org.delete(:general_information) || {}
+        general_information.each do |k,v|
           org[k]=v
         end
-        org.delete(:mission_and_programs).each do |type, content|
+        mission_and_programs = org.delete(:mission_and_programs) || {}
+        mission_and_programs.each do |type, content|
           content = Nokogiri::HTML content
           content = content.text.encode(*encoding_options).strip
           org[type] = content unless content == 'No information currently in database.'
         end
+        ntees = org.delete(:ntees)
+        if ntees
+          org.ntees = {}
+          ntees[:ntee].each do |ntee|
+            org.ntees[ntee.code] = ntee.description unless ntee.code.nil?
+          end
+        end
+
+        org[:world_locations] = org.delete(:world_locations).to_s.split(', ') if org[:word_locations]
+        org[:us_locations]    = org.delete(:us_locations).to_s.split(', ') if org[:us_locations]
 
         org[:name] = org.delete :org_name
         org[:tax_deductible] = org[:deductibility] == 'Contributions are deductible, as provided by law'
-        org[:result_position] = org[:result_position].to_i
+        org[:type] = org[:irs_subsection].split(' ').first.gsub(/\W/,'').to_sym if org[:irs_subsection]
+        org["is_#{org[:type]}"] = true if org[:type]
 
         org[:ein] = EIN.new org[:ein]
 
@@ -78,14 +92,20 @@ module Guidestar
       end
     end
 
-    def clean_keys(value)
+    def clean_result(value)
       case value
       when Array
-        value.map { |v| clean_keys v }
+        value.map { |v| clean_result v }
       when Hash
-        Hash[value.map { |k, v| [k.gsub(/(.)([A-Z])/,'\1_\2').downcase.to_sym, clean_keys(v)] }]
+        Hash[value.map { |k, v| [k.gsub(/(.)([A-Z])/,'\1_\2').downcase.to_sym, clean_result(v)] }]
       else
-        value.nil? ? nil : value.strip
+        if value.nil?
+          nil
+        elsif value =~ /\A[0-9]+\Z/
+          value.to_i
+        else
+          value.strip
+        end
       end
     end
 
