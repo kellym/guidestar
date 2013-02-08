@@ -86,6 +86,7 @@ module Guidestar
           org[field] = org[field].to_i if org[field]
         end
 
+        org[:zip_code] = org.delete :zip
         org[:name] = org.delete :org_name
         org[:tax_deductible] = org[:deductibility] == 'Contributions are deductible, as provided by law'
         org[:type] = org[:irs_subsection].split(' ').first.gsub(/\W/,'').to_sym if org[:irs_subsection]
