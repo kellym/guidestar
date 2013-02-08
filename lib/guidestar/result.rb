@@ -81,6 +81,11 @@ module Guidestar
         org[:world_locations] = org.delete(:world_locations).to_s.split(', ') if org[:word_locations]
         org[:us_locations]    = org.delete(:us_locations).to_s.split(', ') if org[:us_locations]
 
+        # number fields
+        %w(ruling_year year_founded assets income).each do |field|
+          org[field] = org[field].to_i if org[field]
+        end
+
         org[:name] = org.delete :org_name
         org[:tax_deductible] = org[:deductibility] == 'Contributions are deductible, as provided by law'
         org[:type] = org[:irs_subsection].split(' ').first.gsub(/\W/,'').to_sym if org[:irs_subsection]
@@ -101,8 +106,6 @@ module Guidestar
       else
         if value.nil?
           nil
-        elsif value =~ /\A[0-9]+\Z/
-          value.to_i
         else
           value.strip
         end
