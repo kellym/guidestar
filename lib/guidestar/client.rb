@@ -20,13 +20,14 @@ module Guidestar
     # Public: Sets up the core Client object that can be reused throughout
     # the request.
     def initialize(options={})
-      @api_url  = options.delete(:endpoint) || Guidestar.default_endpoint
-      @proxy    = options.delete(:proxy) || Guidestar.proxy
-      @username = options.delete(:username) || Guidestar.username
-      @password = options.delete(:password) || Guidestar.password
-      @options  = options.reverse_merge!(:version => 1.0,
-                                         :page_size => 25,
-                                         :page => 1 )
+      @api_url     = options.delete(:endpoint) || Guidestar.default_endpoint
+      @proxy       = options.delete(:proxy) || Guidestar.proxy
+      @username    = options.delete(:username) || Guidestar.username
+      @password    = options.delete(:password) || Guidestar.password
+      @ssl_options = options.delete(:ssl_options) || Guidestar.ssl_options
+      @options     = options.reverse_merge!(:version => 1.0,
+                                            :page_size => 25,
+                                            :page => 1 )
     end
 
     # Internal: Provides the URL for accessing the API

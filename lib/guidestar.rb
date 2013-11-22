@@ -11,6 +11,7 @@ module Guidestar
     attr_accessor :password
     attr_accessor :proxy
     attr_accessor :default_endpoint
+    attr_accessor :ssl_options
 
     def configure
       yield self

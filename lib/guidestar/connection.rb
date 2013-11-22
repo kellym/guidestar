@@ -5,12 +5,12 @@ module Guidestar
     # @return [Faraday::Connection]
     def connection
       return @connection if @connection
-      params = {}
-      @connection = Faraday.new(:url => api_url, :params => params, :headers => default_headers) do |conn|
+      opts = { :url => api_url, :params => {}, :headers => default_headers }
+      opts[:ssl] = @ssl_options if @ssl_options.is_a?(Hash)
+      @connection = Faraday.new(opts) do |conn|
         conn.response :mashify
         conn.response :xml, :content_type => /\bxml$/
         conn.response :raise_guidestar_error
-
         conn.adapter Faraday.default_adapter
       end
       @connection.proxy(self.proxy) if self.proxy
