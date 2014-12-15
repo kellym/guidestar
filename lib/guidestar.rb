@@ -23,6 +23,6 @@ module Guidestar
     end
   end
 
-  Faraday::Request.register_middleware :response,
+  Faraday::Response.register_middleware :response,
     :raise_guidestar_error => lambda { Faraday::Response::RaiseGuidestarError }
 end
