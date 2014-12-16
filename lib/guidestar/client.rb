@@ -25,9 +25,9 @@ module Guidestar
       @username    = options.delete(:username) || Guidestar.username
       @password    = options.delete(:password) || Guidestar.password
       @ssl_options = options.delete(:ssl_options) || Guidestar.ssl_options
-      @options     = options.reverse_merge!(:version => 1.0,
-                                            :page_size => 25,
-                                            :page => 1 )
+      @options     = { :version => 1.0,
+                       :page_size => 25,
+                       :page => 1 }.merge options
     end
 
     # Internal: Provides the URL for accessing the API
@@ -56,7 +56,7 @@ module Guidestar
     #
     # Returns a Hash of request headers.
     def default_headers
-      headers = {
+      {
         :user_agent => 'Guidestar Ruby Gem',
         :accept => 'application/xml'
       }

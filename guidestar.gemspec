@@ -15,9 +15,9 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = Guidestar::VERSION
 
-  gem.add_dependency 'faraday', '~> 0.8'
+  gem.add_dependency 'faraday', '~> 0.9'
   gem.add_dependency 'faraday_middleware', '~> 0.9'
-  gem.add_dependency 'rash', '~> 0.3'
+  gem.add_dependency 'hashie', '~> 3'
   gem.add_dependency 'multi_xml', '~> 0.5'
   gem.add_dependency 'nokogiri', '~> 1.5'
 end
